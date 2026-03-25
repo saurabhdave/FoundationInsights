@@ -2,34 +2,21 @@
 import PackageDescription
 
 let package = Package(
-    name: "FoundationInsights",
+    name: "AIAnalyticsKit",
     platforms: [
         .iOS("26.0"),
         .macOS("26.0"),
     ],
     products: [
         .library(
-            name: "FoundationInsights",
-            targets: ["FoundationInsights"]
-        ),
-        // The extension is an executable product so downstream Xcode projects
-        // can embed the built binary as a Background Assets App Extension.
-        .executable(
-            name: "AdapterDownloadExtension",
-            targets: ["AdapterDownloadExtension"]
+            name: "AIAnalyticsKit",
+            targets: ["AIAnalyticsKit"]
         ),
     ],
     targets: [
         .target(
-            name: "FoundationInsights",
-            path: "Sources/FoundationInsights",
-            swiftSettings: [
-                .swiftLanguageMode(.v6)
-            ]
-        ),
-        .executableTarget(
-            name: "AdapterDownloadExtension",
-            path: "Sources/AdapterDownloadExtension",
+            name: "AIAnalyticsKit",
+            path: "Sources/AIAnalyticsKit",
             swiftSettings: [
                 .swiftLanguageMode(.v6)
             ]

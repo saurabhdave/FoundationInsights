@@ -1,10 +1,10 @@
 <div align="center">
 
-# 🧠 FoundationInsights
+# 🧠 AIAnalyticsKit
 
-**On-device log intelligence powered by Apple's Foundation Models framework.**
+**On-device user behavior analytics and AI personalization powered by Apple's Foundation Models framework.**
 
-Analyze local app logs for urgency, friction signals, and domain insights —
+Classify users, build feature vectors, and deliver personalized UI —
 entirely on-device, zero network latency, zero data egress.
 
 <br/>
@@ -19,17 +19,17 @@ entirely on-device, zero network latency, zero data egress.
 
 ---
 
-## ✦ Why FoundationInsights?
+## ✦ Why AIAnalyticsKit?
 
-Most log analytics pipelines ship raw logs to a remote server for processing — introducing latency, privacy risk, and an internet dependency. This library runs the entire intelligence pipeline on the device's Neural Engine:
+Most analytics and personalization pipelines ship user data to a remote server for processing — introducing latency, privacy risk, and an internet dependency. AIAnalyticsKit runs the entire pipeline on the device's Neural Engine:
 
-| | Traditional Pipeline | FoundationInsights |
+| | Traditional Pipeline | AIAnalyticsKit |
 |---|:---:|:---:|
 | Network required | ✅ | ❌ |
 | User data leaves device | ✅ | ❌ |
 | Inference latency | 500 ms – 2 s | **< 200 ms** |
 | Works offline | ❌ | ✅ |
-| Custom domain model | ❌ | ✅ |
+| Personalized UI | ❌ | ✅ |
 
 ---
 
@@ -39,28 +39,28 @@ Most log analytics pipelines ship raw logs to a remote server for processing —
 <tr>
 <td width="50%">
 
-**⚡ Dual-Path Analysis**
-Built-in `.contentTagging` for instant zero-cold-start baseline. Automatically upgrades to the custom `UserFrictionAdapter` once compiled.
+**⚡ On-Device AI Prediction**
+Uses `SystemLanguageModel` to classify users as Power, Casual, Explorer, or At-Risk. Falls back to a heuristic when the model is unavailable.
 
 </td>
 <td width="50%">
 
-**🎯 Constrained Generation**
-`@Generable` + `@Guide` annotations lock output at the logit level. Worst-case: 50 tokens. Target latency: < 200 ms on A17 Pro.
+**🎯 Feature Engineering**
+Extracts a rich feature vector (event count, unique screens, error rate, session depth) from raw analytics events.
 
 </td>
 </tr>
 <tr>
 <td>
 
-**🛡️ Memory-Safe Session Pool**
-Actor-isolated single-slot pool. Only one 160 MB adapter session resident at a time — jetsam never triggered.
+**🛡️ SwiftData Persistence**
+Actor-isolated `@ModelActor` store. Analytics events survive app restarts and are available for batch analysis.
 
 </td>
 <td>
 
-**📦 Background Asset Download**
-160 MB+ adapter files fetched out-of-process via Background Assets. Never bundled in your `.ipa`.
+**🎨 Adaptive UI**
+`PersonalizationEngine` maps predictions to greeting, accent color, feature visibility, and recommended actions.
 
 </td>
 </tr>
@@ -71,44 +71,35 @@ Actor-isolated single-slot pool. Only one 160 MB adapter session resident at a t
 ## ✦ Architecture
 
 ```
-                         ┌─────────────────────────────────────────┐
-                         │            LogIntelligenceService        │
-                         │               (Swift actor)              │
-                         └───────────────────┬─────────────────────┘
-                                             │
-               ┌─────────────────────────────┴──────────────────────────┐
-               │                                                         │
-               ▼  FAST PATH  (always available)                          ▼  ENRICHED PATH  (after compile)
-  ┌────────────────────────────┐                          ┌──────────────────────────────────┐
-  │   SystemLanguageModel      │                          │   SystemLanguageModel.Adapter    │
-  │   useCase: .contentTagging │                          │   "UserFrictionAdapter.fmadapter"│
-  │   (built-in, 0 ms startup) │                          │   (~160 MB, Neural Engine MPS)   │
-  └────────────────────────────┘                          └──────────────────────────────────┘
-               │                                                         │
-               └─────────────────────────────┬──────────────────────────┘
-                                             │
-                                             ▼
-                              ┌──────────────────────────┐
-                              │        LogSummary         │
-                              │  urgency  · summary       │
-                              │  tags     · errorCode     │
-                              └──────────────────────────┘
+User Action
+    ↓
+AnalyticsManager          (actor, Swift 6)
+    ↓
+SwiftDataEventStore       (@ModelActor persistence)
+    ↓
+FeatureBuilder            (event → feature vector)
+    ↓
+FoundationPredictionEngine  (SystemLanguageModel)
+    ↓
+PersonalizationEngine     (prediction → UIConfiguration)
+    ↓
+HomeView                  (SwiftUI, @Observable)
 ```
 
-### SPM Targets
+### SPM Target
 
 ```
-FoundationInsights/
+AIAnalyticsKit/
 ├── Sources/
-│   ├── FoundationInsights/          ← 📦 Library  (import this in your app)
-│   │   ├── Models/LogSummary.swift
-│   │   ├── Services/LogIntelligenceService.swift
-│   │   ├── BackgroundAssets/AdapterAssetDownloader.swift
-│   │   └── App/AppDelegate.swift · LogAnalyticsCoordinator.swift
-│   └── AdapterDownloadExtension/       ← ⚙️ Executable  (embed as BA extension)
-│       └── AdapterDownloadExtension.swift
-├── Package.swift
-└── .swift-version
+│   └── AIAnalyticsKit/
+│       ├── AI/
+│       ├── Analytics/
+│       ├── Storage/
+│       ├── Features/
+│       ├── Personalization/
+│       ├── Presentation/
+│       └── Container/
+└── Package.swift
 ```
 
 ---
@@ -120,7 +111,6 @@ FoundationInsights/
 | 📱 iOS | **26.0** |
 | 🔨 Xcode | **26.0** |
 | 🐦 Swift | **6.0** |
-| 🖥️ Architecture | arm64 (Neural Engine required) |
 
 ---
 
@@ -132,12 +122,12 @@ Add to your `Package.swift`:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/your-org/FoundationInsights", from: "1.0.0")
+    .package(url: "https://github.com/your-org/AIAnalyticsKit", from: "1.0.0")
 ],
 targets: [
     .target(
         name: "YourApp",
-        dependencies: ["FoundationInsights"]
+        dependencies: ["AIAnalyticsKit"]
     )
 ]
 ```
@@ -148,173 +138,58 @@ Or in Xcode: **File → Add Package Dependencies…** and paste the repo URL.
 
 ## ✦ Quick Start
 
-### Step 1 — Wire up the app delegate
-
-The included `AppDelegate` handles Background Assets delegate registration, download scheduling, and background session eviction automatically:
+### Step 1 — Wire up the app entry point
 
 ```swift
-import UIKit
-import FoundationInsights
+import SwiftUI
+import AIAnalyticsKit
 
 @main
-final class MyAppDelegate: AppDelegate {
-    // Done. Adapter download + lifecycle wiring handled for you.
-}
-```
+struct MyApp: App {
 
-<details>
-<summary>Manual wiring for existing delegates</summary>
+    @State private var homeViewModel = AIAnalyticsContainer.makeHomeViewModel()
 
-```swift
-func application(_ application: UIApplication,
-                 didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-    BADownloadManager.shared.delegate = AdapterAssetDownloader.shared
-    AdapterAssetDownloader.shared.scheduleDownloadIfNeeded()
-
-    if let url = AdapterAssetDownloader.shared.localAdapterURL,
-       AdapterAssetDownloader.shared.isAdapterCompatible(at: url) {
-        Task { await intelligenceService.prepare(adapterURL: url) }
+    var body: some Scene {
+        WindowGroup {
+            HomeView()
+                .environment(homeViewModel)
+                .modelContainer(AIAnalyticsContainer.modelContainer)
+        }
     }
-    return true
-}
-
-func applicationDidEnterBackground(_ application: UIApplication) {
-    Task { await intelligenceService.evictAdapterSession() }
 }
 ```
 
-</details>
-
----
-
-### Step 2 — Analyze a log batch
+### Step 2 — Track events
 
 ```swift
-let service = LogIntelligenceService()
+// Track a single event
+await analyticsManager.track(
+    AnalyticsEvent(name: "screen_viewed", category: .navigation, properties: ["screen": "dashboard"])
+)
 
-let summary = try await service.analyze(logBatch: recentLogs)
-
-print(summary.urgency)            // "High" | "Medium" | "Low"
-print(summary.summary)            // "Repeated auth failures preceded crash"
-print(summary.tags)               // ["auth", "crash", "onboarding"]
-print(summary.dominantErrorCode)  // Optional("ERR_TOKEN_EXPIRED")
+// Track a batch
+await analyticsManager.trackBatch(events)
 ```
+
+### Step 3 — Let the pipeline run
+
+`HomeView` automatically runs the full pipeline on `.task {}`:
+- Fetches all events from SwiftData
+- Builds the feature vector
+- Runs on-device AI prediction
+- Maps to a personalized `UIConfiguration`
+- Renders the adaptive UI
 
 ---
 
-### Step 3 — React to high-urgency events
+## ✦ User Types
 
-```swift
-NotificationCenter.default.addObserver(
-    forName: .highUrgencyLogsDetected,
-    object: nil,
-    queue: .main
-) { notification in
-    guard let summary = notification.object as? LogSummary else { return }
-    MyCrashReporter.flag(summary.dominantErrorCode, tags: summary.tags)
-}
-```
-
----
-
-## ✦ Output Model
-
-`LogSummary` uses `@Guide` constraints that operate **at the logit level** — the model is physically incapable of producing tokens outside the allowed set:
-
-```swift
-@Generable
-public struct LogSummary {
-
-    @Guide(description: "Triage urgency", .anyOf(["High", "Medium", "Low"]))
-    var urgency: String            // → always 1 token
-
-    @Guide(description: "Plain-language summary", .maximumCount(40))
-    var summary: String            // → ≤ 40 words
-
-    @Guide(description: "Up to 3 domain tags", .maximumCount(3))
-    var tags: [String]             // → ≤ 3 × ~2 tokens
-
-    var dominantErrorCode: String? // → 0–1 token
-}
-//                                    ──────────────
-//                                    Worst case: ~50 tokens total
-```
-
----
-
-## ✦ Adapter Compilation Lifecycle
-
-`adapter.compile()` translates portable `.fmadapter` weights into a device-specific Metal Performance Shaders graph. It runs **once**, then the result is cached on disk keyed to `(device model × OS build × adapter checksum)`.
-
-```
-  First launch                        All subsequent launches
-  ────────────                        ──────────────────────
-
-  prepare(adapterURL:)                prepare(adapterURL:)
-       │                                   │
-       ▼                                   ▼
-  AdapterState → .compiling          AdapterState already .ready
-       │                                   │
-       ▼                                   ▼
-  adapter.compile()                  return immediately (no-op)
-  ⏱ ~2–5 s on ANE
-       │
-       ▼
-  MPS graph written to disk
-  (persists across app restarts)
-       │
-       ▼
-  AdapterState → .ready
-```
-
-> [!IMPORTANT]
-> Call `prepare(adapterURL:)` at the **end of the first user session** — not at launch. The 2–5 s ANE compilation should not compete with your first-render pass.
-
----
-
-## ✦ Background Assets Setup
-
-The adapter (~160 MB) is downloaded out-of-process by the system daemon — no `URLSession`, no manual retry logic, and Low Data Mode is respected automatically.
-
-**Xcode setup checklist:**
-
-- [ ] **File → New → Target → Background Download Extension** — point it at `Sources/AdapterDownloadExtension/`
-- [ ] Add the **Background Assets** capability to both the app and extension targets
-- [ ] Add an **App Group** (`group.com.app.FoundationInsights`) to both targets
-- [ ] Set these keys in the **extension's** `Info.plist`:
-
-| Key | Value |
-|---|---|
-| `BAManifestURL` | `https://cdn.yourapp.com/models/manifest.json` |
-| `BAMaxInstallSize` | `168000000` |
-| `NSBackgroundAssetsBundleIdentifier` | `com.app.FoundationInsights` |
-
-> [!NOTE]
-> Always call `AdapterAssetDownloader.isAdapterCompatible(at:)` before `prepare()`. This checks the adapter's embedded ABI manifest against the running OS version without loading the 160 MB weights.
-
----
-
-## ✦ Memory Management
-
-Each adapter session occupies ~160 MB of GPU-addressable memory. The service manages this through an actor-isolated single-slot pool:
-
-```
-  analyze() called
-       │
-       ├── liveAdapterSession == nil?
-       │       └── YES → create new session  (+160 MB GPU)
-       │
-       ├── respond() executes
-       │
-       └── defer { liveAdapterSession = nil }  (–160 MB GPU)
-```
-
-| Trigger | Action | Memory |
+| Type | Trigger | UI Treatment |
 |---|---|---|
-| `analyze()` call | Session created (or reused) | +160 MB |
-| `analyze()` returns / throws | `defer` drops the session | −160 MB |
-| `applicationDidEnterBackground` | `evictAdapterSession()` | −160 MB |
-| Built-in `.contentTagging` path | Managed by system `aned` daemon | **0 MB against your app** |
+| **Power User** | High event count + deep analysis | Purple accent, advanced features unlocked |
+| **Casual User** | Low engagement | Blue accent, simplified UI |
+| **Explorer** | High unique screen count | Teal accent, discovery-focused |
+| **At-Risk** | High error rate | Orange accent, re-engagement actions |
 
 ---
 

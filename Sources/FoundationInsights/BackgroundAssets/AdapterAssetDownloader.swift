@@ -28,8 +28,8 @@ public final class AdapterAssetDownloader: NSObject, @unchecked Sendable {
         string: "https://cdn.yourapp.com/models/UserFrictionAdapter_v2.fmadapter"
     )!
 
-    private let downloadIdentifier = "com.app.SDOnDeviceAIAnalytics.UserFrictionAdapter"
-    private let logger = Logger(subsystem: "com.app.SDOnDeviceAIAnalytics",
+    private let downloadIdentifier = "com.app.FoundationInsights.UserFrictionAdapter"
+    private let logger = Logger(subsystem: "com.app.FoundationInsights",
                                 category: "AdapterAssetDownloader")
 
     // Resolved local path after a successful download.
@@ -74,7 +74,7 @@ public final class AdapterAssetDownloader: NSObject, @unchecked Sendable {
             request: URLRequest(url: adapterRemoteURL),
             // fileSize drives the OS scheduling heuristic (bytes).
             fileSize: 168_000_000,
-            applicationGroupIdentifier: "group.com.app.SDOnDeviceAIAnalytics"
+            applicationGroupIdentifier: "group.com.app.FoundationInsights"
         )
 
         do {

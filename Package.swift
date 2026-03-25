@@ -2,14 +2,14 @@
 import PackageDescription
 
 let package = Package(
-    name: "SDOnDeviceAIAnalytics",
+    name: "FoundationInsights",
     platforms: [
         .iOS(.v26)
     ],
     products: [
         .library(
-            name: "SDOnDeviceAIAnalytics",
-            targets: ["SDOnDeviceAIAnalytics"]
+            name: "FoundationInsights",
+            targets: ["FoundationInsights"]
         ),
         // The extension is an executable product so downstream Xcode projects
         // can embed the built binary as a Background Assets App Extension.
@@ -20,8 +20,8 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "SDOnDeviceAIAnalytics",
-            path: "Sources/SDOnDeviceAIAnalytics",
+            name: "FoundationInsights",
+            path: "Sources/FoundationInsights",
             swiftSettings: [
                 .swiftLanguageMode(.v6)
             ]

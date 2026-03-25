@@ -13,7 +13,7 @@ import BackgroundAssets
 // Info.plist keys required in the *extension* target:
 //   BAManifestURL            → https://cdn.yourapp.com/models/manifest.json
 //   BAMaxInstallSize         → 168000000   (bytes, shown in App Store listing)
-//   NSBackgroundAssetsBundleIdentifier → com.app.SDOnDeviceAIAnalytics
+//   NSBackgroundAssetsBundleIdentifier → com.app.FoundationInsights
 
 @main
 struct AdapterDownloadExtension: BADownloaderExtension {
@@ -35,7 +35,7 @@ struct AdapterDownloadExtension: BADownloaderExtension {
         // Use an App Group shared container to hand the file to the app.
         let groupURL = FileManager.default
             .containerURL(forSecurityApplicationGroupIdentifier:
-                "group.com.app.SDOnDeviceAIAnalytics")!
+                "group.com.app.FoundationInsights")!
             .appendingPathComponent("UserFrictionAdapter_v2.fmadapter")
 
         try? FileManager.default.moveItem(at: fileURL, to: groupURL)

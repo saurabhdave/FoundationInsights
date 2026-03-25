@@ -44,7 +44,7 @@ public actor LogIntelligenceService {
 
     // MARK: - Private State
 
-    private let logger = Logger(subsystem: "com.app.SDOnDeviceAIAnalytics",
+    private let logger = Logger(subsystem: "com.app.FoundationInsights",
                                 category: "LogIntelligenceService")
 
     /// Built-in model — always available, zero cold-start.

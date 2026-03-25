@@ -9,7 +9,7 @@ import OSLog
 public final class LogAnalyticsCoordinator {
 
     private let service: LogIntelligenceService
-    private let logger = Logger(subsystem: "com.app.SDOnDeviceAIAnalytics",
+    private let logger = Logger(subsystem: "com.app.FoundationInsights",
                                 category: "LogAnalyticsCoordinator")
 
     public init(service: LogIntelligenceService) {
@@ -48,6 +48,6 @@ public final class LogAnalyticsCoordinator {
 
 public extension Notification.Name {
     static let highUrgencyLogsDetected = Notification.Name(
-        "com.app.SDOnDeviceAIAnalytics.highUrgencyLogsDetected"
+        "com.app.FoundationInsights.highUrgencyLogsDetected"
     )
 }

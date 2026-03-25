@@ -29,7 +29,7 @@ public final class LogAnalyticsCoordinator {
     private func handleSummary(_ summary: LogSummary) {
         logger.info("""
             ── Log Batch Summary ──────────────────────
-            Urgency : \(summary.urgency)
+            Urgency : \(summary.urgency.rawValue)
             Summary : \(summary.summary)
             Tags    : \(summary.tags.joined(separator: ", "))
             Error   : \(summary.dominantErrorCode ?? "none")
@@ -37,7 +37,7 @@ public final class LogAnalyticsCoordinator {
             """)
 
         // Route high-urgency batches to your crash reporter / analytics pipeline.
-        if summary.urgency == "High" {
+        if summary.urgency == .high {
             NotificationCenter.default.post(
                 name: .highUrgencyLogsDetected,
                 object: summary

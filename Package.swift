@@ -4,7 +4,7 @@ import PackageDescription
 let package = Package(
     name: "FoundationInsights",
     platforms: [
-        .iOS(.v26)
+        .iOS("26.0")
     ],
     products: [
         .library(

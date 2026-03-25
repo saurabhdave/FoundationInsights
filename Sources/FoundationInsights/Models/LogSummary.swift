@@ -16,13 +16,23 @@ import FoundationModels
 //   Worst-case output ≈ 50 tokens — keeps latency under 200 ms on A17 Pro.
 
 @Generable
-public struct LogSummary {
-    /// Triage level derived from error density and user-facing impact signals.
-    @Guide(description: "Triage urgency", .anyOf(["High", "Medium", "Low"]))
-    public var urgency: String
+public struct LogSummary: Sendable {
 
-    /// One-sentence human-readable synopsis of the log batch.
-    @Guide(description: "Plain-language summary", .maximumCount(40))
+    /// Triage level derived from error density and user-facing impact signals.
+    /// Using an enum lets @Generable synthesise the anyOf constraint automatically
+    /// from the cases — no manual .anyOf([String]) needed.
+    @Generable
+    public enum Urgency: String, Sendable {
+        case high   = "High"
+        case medium = "Medium"
+        case low    = "Low"
+    }
+
+    @Guide(description: "Triage urgency")
+    public var urgency: Urgency
+
+    /// One-sentence human-readable synopsis of the log batch (40 words or fewer).
+    @Guide(description: "Plain-language summary of the log batch in 40 words or fewer")
     public var summary: String
 
     /// Searchable topic labels extracted from log content.

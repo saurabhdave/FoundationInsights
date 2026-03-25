@@ -13,6 +13,12 @@ swift build -c release
 
 # Run tests (none defined yet — add test targets to Package.swift as needed)
 swift test
+
+# Build the sample app (requires Xcode + iOS 26 Simulator)
+xcodebuild -project Examples/FoundationInsightsDemo/FoundationInsightsDemo.xcodeproj \
+  -scheme FoundationInsightsDemo \
+  -destination 'platform=iOS Simulator,name=iPhone 17 Pro' \
+  build
 ```
 
 ## Architecture
@@ -50,6 +56,14 @@ The service automatically upgrades to the enriched path once `prepare(adapterURL
 - Swift 6.0 (strict concurrency, `.swiftLanguageMode(.v6)`)
 - iOS 26.0 minimum, arm64 only
 - No external dependencies — only Apple frameworks: `FoundationModels`, `BackgroundAssets`, `UIKit`, `OSLog`
+
+### Sample App
+
+`Examples/FoundationInsightsDemo/` is a standalone Xcode project that imports FoundationInsights as a local SPM dependency (`relativePath = "../.."`). Open `FoundationInsightsDemo.xcodeproj` directly — no workspace needed.
+
+- **Fast path** works in the simulator (built-in `.contentTagging` model)
+- **Enriched path** requires a physical device with a Neural Engine and the downloaded adapter
+- Pre-canned log batches (High / Medium / Low urgency) are in `SampleLogBatches.swift`
 
 ### Background Assets Setup
 

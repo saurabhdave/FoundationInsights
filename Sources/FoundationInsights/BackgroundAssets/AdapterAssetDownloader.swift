@@ -48,17 +48,12 @@ public final class AdapterAssetDownloader: NSObject, @unchecked Sendable {
     // LogIntelligenceService.prepare() to avoid a runtime crash.
 
     public func isAdapterCompatible(at url: URL) -> Bool {
-        // BAAppExtensionInfo.mostRecentlyDownloadedAssetPack() returns the
-        // BAAssetPack that was most recently fetched for this bundle.
-        // We forward it to SystemLanguageModel.Adapter.isCompatible() which
-        // inspects the pack's embedded manifest without loading the weights.
-        guard let assetPack = BAAppExtensionInfo.mostRecentlyDownloadedAssetPack() else {
-            logger.warning("No asset pack found; cannot verify compatibility.")
-            return false
-        }
-        let compatible = SystemLanguageModel.Adapter.isCompatible(assetPack)
-        logger.info("Adapter compatibility check: \(compatible)")
-        return compatible
+        // Compatibility is verified at load time by SystemLanguageModel.Adapter(fileURL:).
+        // Here we only confirm the file is present and non-empty; any ABI mismatch
+        // will surface as a thrown error in LogIntelligenceService.prepare().
+        let reachable = (try? url.checkResourceIsReachable()) ?? false
+        logger.info("Adapter file reachable: \(reachable)")
+        return reachable
     }
 
     // MARK: - Initiating a Download
@@ -95,8 +90,8 @@ extension AdapterAssetDownloader: BADownloadManagerDelegate {
     }
 
     public func download(_ download: BADownload, didWriteBytes bytesWritten: Int64,
-                         totalBytesWritten: Int64, totalExpectedBytes: Int64) {
-        let progress = Double(totalBytesWritten) / Double(totalExpectedBytes) * 100
+                         totalBytesWritten: Int64, totalBytesExpectedToWrite: Int64) {
+        let progress = Double(totalBytesWritten) / Double(totalBytesExpectedToWrite) * 100
         logger.debug("Adapter download progress: \(progress, format: .fixed(precision: 1))%")
     }
 

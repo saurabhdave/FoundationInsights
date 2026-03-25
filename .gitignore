@@ -7,6 +7,7 @@ xcuserdata/
 DerivedData/
 *.xcodeproj/xcuserdata/
 *.xcworkspace/xcuserdata/
+*.xcworkspace/xcshareddata/swiftpm/Package.resolved
 
 # macOS
 .DS_Store

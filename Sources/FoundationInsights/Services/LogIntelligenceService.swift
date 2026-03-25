@@ -101,11 +101,7 @@ public actor LogIntelligenceService {
 
     private func analyzeWithBuiltIn(logBatch: String) async throws -> LogSummary {
         let session = LanguageModelSession(model: builtInModel)
-        let prompt = Prompt(logBatch, role: .user)
-        return try await session.respond(
-            to: prompt,
-            generating: LogSummary.self
-        )
+        return try await session.respond(to: logBatch, generating: LogSummary.self).content
     }
 
     // MARK: - Adapter Path (one-slot pool)
@@ -134,7 +130,9 @@ public actor LogIntelligenceService {
         if let existing = liveAdapterSession {
             session = existing
         } else {
-            session = LanguageModelSession(adapter: adapter)
+            // SystemLanguageModel(adapter:) wraps the compiled adapter weights
+            // into a new model instance; LanguageModelSession then runs it.
+            session = LanguageModelSession(model: SystemLanguageModel(adapter: adapter))
             liveAdapterSession = session
         }
 
@@ -144,11 +142,7 @@ public actor LogIntelligenceService {
             liveAdapterSession = nil
         }
 
-        let prompt = Prompt(logBatch, role: .user)
-        return try await session.respond(
-            to: prompt,
-            generating: LogSummary.self
-        )
+        return try await session.respond(to: logBatch, generating: LogSummary.self).content
     }
 
     // MARK: - Explicit Eviction

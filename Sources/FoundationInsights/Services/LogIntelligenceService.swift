@@ -35,6 +35,17 @@ public actor LogIntelligenceService {
         case frictionAdapter
     }
 
+    public enum AnalysisError: Error, LocalizedError {
+        case modelUnavailable
+
+        public var errorDescription: String? {
+            switch self {
+            case .modelUnavailable:
+                return "The on-device language model is not available on this device or OS version."
+            }
+        }
+    }
+
     private enum AdapterState {
         case notLoaded
         case compiling
@@ -48,6 +59,12 @@ public actor LogIntelligenceService {
                                 category: "LogIntelligenceService")
 
     /// Built-in model — always available, zero cold-start.
+    /// contentTagging is used because it is always present in the simulator and
+    /// supports constrained @Generable generation without requiring a download.
+    /// Note: do NOT add a LanguageModelSession `instructions:` parameter on this
+    /// model — the contentTagging use-case runs a locale-detection pass on
+    /// instructions text and throws unsupportedLanguageOrLocale for long strings.
+    /// Context is embedded in the user-message prompt instead.
     private let builtInModel = SystemLanguageModel(useCase: .contentTagging)
 
     /// Custom adapter state machine; transitions driven by prepare() and
@@ -100,8 +117,14 @@ public actor LogIntelligenceService {
     // MARK: - Built-In Path
 
     private func analyzeWithBuiltIn(logBatch: String) async throws -> LogSummary {
+        guard case .available = builtInModel.availability else {
+            throw AnalysisError.modelUnavailable
+        }
         let session = LanguageModelSession(model: builtInModel)
-        return try await session.respond(to: logBatch, generating: LogSummary.self).content
+        // Context is in the user message rather than session instructions to avoid
+        // the locale-detection path that the contentTagging model runs on instructions.
+        let prompt = "Analyze this iOS app log batch for errors and urgency:\n\n\(logBatch)"
+        return try await session.respond(to: prompt, generating: LogSummary.self).content
     }
 
     // MARK: - Adapter Path (one-slot pool)
@@ -132,7 +155,9 @@ public actor LogIntelligenceService {
         } else {
             // SystemLanguageModel(adapter:) wraps the compiled adapter weights
             // into a new model instance; LanguageModelSession then runs it.
-            session = LanguageModelSession(model: SystemLanguageModel(adapter: adapter))
+            session = LanguageModelSession(
+                model: SystemLanguageModel(adapter: adapter)
+            )
             liveAdapterSession = session
         }
 
@@ -142,7 +167,8 @@ public actor LogIntelligenceService {
             liveAdapterSession = nil
         }
 
-        return try await session.respond(to: logBatch, generating: LogSummary.self).content
+        let prompt = "Analyze this iOS app log batch for errors and urgency:\n\n\(logBatch)"
+        return try await session.respond(to: prompt, generating: LogSummary.self).content
     }
 
     // MARK: - Explicit Eviction

@@ -1,3 +1,4 @@
+#if canImport(UIKit)
 import UIKit
 import BackgroundAssets
 
@@ -45,3 +46,4 @@ public final class AppDelegate: UIResponder, UIApplicationDelegate {
         }
     }
 }
+#endif // canImport(UIKit)

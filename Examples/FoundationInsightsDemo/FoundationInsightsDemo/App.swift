@@ -1,10 +1,9 @@
 import SwiftUI
-import FoundationInsights
 
 @main
 struct FoundationInsightsDemoApp: App {
 
-    @State private var viewModel = LogAnalysisViewModel(service: LogIntelligenceService())
+    @State private var viewModel = AppDependencies.makeLogAnalysisViewModel()
 
     var body: some Scene {
         WindowGroup {

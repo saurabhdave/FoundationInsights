@@ -1,3 +1,4 @@
+#if os(iOS)
 import BackgroundAssets
 
 // MARK: - Background Assets App Extension
@@ -45,3 +46,15 @@ struct AdapterDownloadExtension: BADownloaderExtension {
         // System will retry per BARetryPolicy.  Log for diagnostics only.
     }
 }
+
+#else
+
+// macOS stub — Background Assets App Extensions are iOS-only.
+// This target is only ever built and embedded in an iOS app extension bundle;
+// the stub exists solely so `swift build` on a macOS host compiles cleanly.
+@main
+struct AdapterDownloadExtension {
+    static func main() {}
+}
+
+#endif // os(iOS)

@@ -3,26 +3,64 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 77;
+	objectVersion = 60;
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A30DD2352F7493000016F357 /* PreviewHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = A30DD2342F7493000016F357 /* PreviewHelpers.swift */; };
 		AA000000000000000000001A /* App.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000001B /* App.swift */; };
 		AA000000000000000000002A /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000002B /* ContentView.swift */; };
-		AA000000000000000000003A /* LogAnalysisView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000003B /* LogAnalysisView.swift */; };
-		AA000000000000000000004A /* LogAnalysisViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000004B /* LogAnalysisViewModel.swift */; };
 		AA000000000000000000005A /* SampleLogBatches.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000005B /* SampleLogBatches.swift */; };
 		AA000000000000000000006A /* FoundationInsights in Frameworks */ = {isa = PBXBuildFile; productRef = AA000000000000000000006B /* FoundationInsights */; };
+		AA000000000000000000A01A /* AppDependencies.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000A01B /* AppDependencies.swift */; };
+		AA000000000000000000A02A /* LogAnalysisError.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000A02B /* LogAnalysisError.swift */; };
+		AA000000000000000000A03A /* AnalyzeLogsUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000A03B /* AnalyzeLogsUseCase.swift */; };
+		AA000000000000000000A04A /* LoadSampleBatchUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000A04B /* LoadSampleBatchUseCase.swift */; };
+		AA000000000000000000A05A /* LogAnalysisRepositoryProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000A05B /* LogAnalysisRepositoryProtocol.swift */; };
+		AA000000000000000000A06A /* LogAnalysisDataSourceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000A06B /* LogAnalysisDataSourceProtocol.swift */; };
+		AA000000000000000000A07A /* FoundationInsightsDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000A07B /* FoundationInsightsDataSource.swift */; };
+		AA000000000000000000A08A /* DefaultLogAnalysisRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000A08B /* DefaultLogAnalysisRepository.swift */; };
+		AA000000000000000000A09A /* LogAnalysisViewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000A09B /* LogAnalysisViewState.swift */; };
+		AA000000000000000000A0AA /* LogAnalysisViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000A0AB /* LogAnalysisViewModel.swift */; };
+		AA000000000000000000A0BA /* LogAnalysisView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000A0BB /* LogAnalysisView.swift */; };
+		AA000000000000000000A10A /* SamplePickerCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000A10B /* SamplePickerCard.swift */; };
+		AA000000000000000000A11A /* LogBatchCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000A11B /* LogBatchCard.swift */; };
+		AA000000000000000000A12A /* AnalyzeButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000A12B /* AnalyzeButton.swift */; };
+		AA000000000000000000A13A /* ResultCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000A13B /* ResultCard.swift */; };
+		AA000000000000000000A14A /* ErrorBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000A14B /* ErrorBanner.swift */; };
+		AA000000000000000000A15A /* UrgencyBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000A15B /* UrgencyBadge.swift */; };
+		AA000000000000000000A16A /* TagsRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000A16B /* TagsRow.swift */; };
+		AA000000000000000000A17A /* CardContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000A17B /* CardContainer.swift */; };
+		AA000000000000000000A18A /* SectionHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000A18B /* SectionHeader.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		A30DD2342F7493000016F357 /* PreviewHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewHelpers.swift; sourceTree = "<group>"; };
 		AA000000000000000000001B /* App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = App.swift; sourceTree = "<group>"; };
 		AA000000000000000000002B /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
-		AA000000000000000000003B /* LogAnalysisView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogAnalysisView.swift; sourceTree = "<group>"; };
-		AA000000000000000000004B /* LogAnalysisViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogAnalysisViewModel.swift; sourceTree = "<group>"; };
 		AA000000000000000000005B /* SampleLogBatches.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleLogBatches.swift; sourceTree = "<group>"; };
 		AA00000000000000000000F0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		AA00000000000000000000F1 /* FoundationInsightsDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FoundationInsightsDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		AA000000000000000000A01B /* AppDependencies.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDependencies.swift; sourceTree = "<group>"; };
+		AA000000000000000000A02B /* LogAnalysisError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogAnalysisError.swift; sourceTree = "<group>"; };
+		AA000000000000000000A03B /* AnalyzeLogsUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyzeLogsUseCase.swift; sourceTree = "<group>"; };
+		AA000000000000000000A04B /* LoadSampleBatchUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadSampleBatchUseCase.swift; sourceTree = "<group>"; };
+		AA000000000000000000A05B /* LogAnalysisRepositoryProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogAnalysisRepositoryProtocol.swift; sourceTree = "<group>"; };
+		AA000000000000000000A06B /* LogAnalysisDataSourceProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogAnalysisDataSourceProtocol.swift; sourceTree = "<group>"; };
+		AA000000000000000000A07B /* FoundationInsightsDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoundationInsightsDataSource.swift; sourceTree = "<group>"; };
+		AA000000000000000000A08B /* DefaultLogAnalysisRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultLogAnalysisRepository.swift; sourceTree = "<group>"; };
+		AA000000000000000000A09B /* LogAnalysisViewState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogAnalysisViewState.swift; sourceTree = "<group>"; };
+		AA000000000000000000A0AB /* LogAnalysisViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogAnalysisViewModel.swift; sourceTree = "<group>"; };
+		AA000000000000000000A0BB /* LogAnalysisView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogAnalysisView.swift; sourceTree = "<group>"; };
+		AA000000000000000000A10B /* SamplePickerCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SamplePickerCard.swift; sourceTree = "<group>"; };
+		AA000000000000000000A11B /* LogBatchCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogBatchCard.swift; sourceTree = "<group>"; };
+		AA000000000000000000A12B /* AnalyzeButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyzeButton.swift; sourceTree = "<group>"; };
+		AA000000000000000000A13B /* ResultCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultCard.swift; sourceTree = "<group>"; };
+		AA000000000000000000A14B /* ErrorBanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorBanner.swift; sourceTree = "<group>"; };
+		AA000000000000000000A15B /* UrgencyBadge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UrgencyBadge.swift; sourceTree = "<group>"; };
+		AA000000000000000000A16B /* TagsRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagsRow.swift; sourceTree = "<group>"; };
+		AA000000000000000000A17B /* CardContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardContainer.swift; sourceTree = "<group>"; };
+		AA000000000000000000A18B /* SectionHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectionHeader.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -49,21 +87,120 @@
 			isa = PBXGroup;
 			children = (
 				AA000000000000000000001B /* App.swift */,
+				AA000000000000000000A01B /* AppDependencies.swift */,
 				AA000000000000000000002B /* ContentView.swift */,
-				AA000000000000000000003B /* LogAnalysisView.swift */,
-				AA000000000000000000004B /* LogAnalysisViewModel.swift */,
 				AA000000000000000000005B /* SampleLogBatches.swift */,
 				AA00000000000000000000F0 /* Info.plist */,
+				AA0000000000000000000D01 /* Domain */,
+				AA0000000000000000000D05 /* Data */,
+				AA0000000000000000000D08 /* Presentation */,
 			);
 			path = FoundationInsightsDemo;
 			sourceTree = "<group>";
 		};
-		AA0000000000000000000202 /* MainGroup */ = {
+		AA0000000000000000000202 = {
 			isa = PBXGroup;
 			children = (
 				AA0000000000000000000201 /* FoundationInsightsDemo */,
 				AA0000000000000000000200 /* Products */,
 			);
+			sourceTree = "<group>";
+		};
+		AA0000000000000000000D01 /* Domain */ = {
+			isa = PBXGroup;
+			children = (
+				AA0000000000000000000D02 /* Entities */,
+				AA0000000000000000000D03 /* UseCases */,
+				AA0000000000000000000D04 /* Repositories */,
+			);
+			path = Domain;
+			sourceTree = "<group>";
+		};
+		AA0000000000000000000D02 /* Entities */ = {
+			isa = PBXGroup;
+			children = (
+				AA000000000000000000A02B /* LogAnalysisError.swift */,
+			);
+			path = Entities;
+			sourceTree = "<group>";
+		};
+		AA0000000000000000000D03 /* UseCases */ = {
+			isa = PBXGroup;
+			children = (
+				AA000000000000000000A03B /* AnalyzeLogsUseCase.swift */,
+				AA000000000000000000A04B /* LoadSampleBatchUseCase.swift */,
+			);
+			path = UseCases;
+			sourceTree = "<group>";
+		};
+		AA0000000000000000000D04 /* Repositories */ = {
+			isa = PBXGroup;
+			children = (
+				AA000000000000000000A05B /* LogAnalysisRepositoryProtocol.swift */,
+			);
+			path = Repositories;
+			sourceTree = "<group>";
+		};
+		AA0000000000000000000D05 /* Data */ = {
+			isa = PBXGroup;
+			children = (
+				AA0000000000000000000D06 /* DataSources */,
+				AA0000000000000000000D07 /* Repositories */,
+			);
+			path = Data;
+			sourceTree = "<group>";
+		};
+		AA0000000000000000000D06 /* DataSources */ = {
+			isa = PBXGroup;
+			children = (
+				AA000000000000000000A06B /* LogAnalysisDataSourceProtocol.swift */,
+				AA000000000000000000A07B /* FoundationInsightsDataSource.swift */,
+			);
+			path = DataSources;
+			sourceTree = "<group>";
+		};
+		AA0000000000000000000D07 /* Repositories */ = {
+			isa = PBXGroup;
+			children = (
+				AA000000000000000000A08B /* DefaultLogAnalysisRepository.swift */,
+			);
+			path = Repositories;
+			sourceTree = "<group>";
+		};
+		AA0000000000000000000D08 /* Presentation */ = {
+			isa = PBXGroup;
+			children = (
+				AA0000000000000000000D09 /* LogAnalysis */,
+				AA0000000000000000000D0A /* Components */,
+				A30DD2342F7493000016F357 /* PreviewHelpers.swift */,
+			);
+			path = Presentation;
+			sourceTree = "<group>";
+		};
+		AA0000000000000000000D09 /* LogAnalysis */ = {
+			isa = PBXGroup;
+			children = (
+				AA000000000000000000A09B /* LogAnalysisViewState.swift */,
+				AA000000000000000000A0AB /* LogAnalysisViewModel.swift */,
+				AA000000000000000000A0BB /* LogAnalysisView.swift */,
+			);
+			path = LogAnalysis;
+			sourceTree = "<group>";
+		};
+		AA0000000000000000000D0A /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				AA000000000000000000A10B /* SamplePickerCard.swift */,
+				AA000000000000000000A11B /* LogBatchCard.swift */,
+				AA000000000000000000A12B /* AnalyzeButton.swift */,
+				AA000000000000000000A13B /* ResultCard.swift */,
+				AA000000000000000000A14B /* ErrorBanner.swift */,
+				AA000000000000000000A15B /* UrgencyBadge.swift */,
+				AA000000000000000000A16B /* TagsRow.swift */,
+				AA000000000000000000A17B /* CardContainer.swift */,
+				AA000000000000000000A18B /* SectionHeader.swift */,
+			);
+			path = Components;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -111,7 +248,7 @@
 				en,
 				Base,
 			);
-			mainGroup = AA0000000000000000000202 /* MainGroup */;
+			mainGroup = AA0000000000000000000202;
 			packageReferences = (
 				AA0000000000000000000600 /* XCLocalSwiftPackageReference "../.." */,
 			);
@@ -141,9 +278,28 @@
 			files = (
 				AA000000000000000000001A /* App.swift in Sources */,
 				AA000000000000000000002A /* ContentView.swift in Sources */,
-				AA000000000000000000003A /* LogAnalysisView.swift in Sources */,
-				AA000000000000000000004A /* LogAnalysisViewModel.swift in Sources */,
 				AA000000000000000000005A /* SampleLogBatches.swift in Sources */,
+				AA000000000000000000A01A /* AppDependencies.swift in Sources */,
+				AA000000000000000000A02A /* LogAnalysisError.swift in Sources */,
+				AA000000000000000000A03A /* AnalyzeLogsUseCase.swift in Sources */,
+				AA000000000000000000A04A /* LoadSampleBatchUseCase.swift in Sources */,
+				AA000000000000000000A05A /* LogAnalysisRepositoryProtocol.swift in Sources */,
+				AA000000000000000000A06A /* LogAnalysisDataSourceProtocol.swift in Sources */,
+				AA000000000000000000A07A /* FoundationInsightsDataSource.swift in Sources */,
+				AA000000000000000000A08A /* DefaultLogAnalysisRepository.swift in Sources */,
+				AA000000000000000000A09A /* LogAnalysisViewState.swift in Sources */,
+				A30DD2352F7493000016F357 /* PreviewHelpers.swift in Sources */,
+				AA000000000000000000A0AA /* LogAnalysisViewModel.swift in Sources */,
+				AA000000000000000000A0BA /* LogAnalysisView.swift in Sources */,
+				AA000000000000000000A10A /* SamplePickerCard.swift in Sources */,
+				AA000000000000000000A11A /* LogBatchCard.swift in Sources */,
+				AA000000000000000000A12A /* AnalyzeButton.swift in Sources */,
+				AA000000000000000000A13A /* ResultCard.swift in Sources */,
+				AA000000000000000000A14A /* ErrorBanner.swift in Sources */,
+				AA000000000000000000A15A /* UrgencyBadge.swift in Sources */,
+				AA000000000000000000A16A /* TagsRow.swift in Sources */,
+				AA000000000000000000A17A /* CardContainer.swift in Sources */,
+				AA000000000000000000A18A /* SectionHeader.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -268,7 +424,10 @@
 				ARCHS = arm64;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = LJ4XCD8HD3;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = FoundationInsightsDemo/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = NO;
@@ -281,7 +440,10 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.example.FoundationInsightsDemo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
 				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = 1;
@@ -294,7 +456,10 @@
 				ARCHS = arm64;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = LJ4XCD8HD3;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = FoundationInsightsDemo/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = NO;
@@ -307,7 +472,10 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.example.FoundationInsightsDemo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
 				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = 1;
@@ -340,7 +508,7 @@
 /* Begin XCLocalSwiftPackageReference section */
 		AA0000000000000000000600 /* XCLocalSwiftPackageReference "../.." */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = "../..";
+			relativePath = ../..;
 		};
 /* End XCLocalSwiftPackageReference section */
 
@@ -351,7 +519,6 @@
 			productName = FoundationInsights;
 		};
 /* End XCSwiftPackageProductDependency section */
-
 	};
 	rootObject = AA0000000000000000000500 /* Project object */;
 }

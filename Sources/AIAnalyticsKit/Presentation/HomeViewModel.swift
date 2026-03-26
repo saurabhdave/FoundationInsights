@@ -21,6 +21,8 @@ public final class HomeViewModel {
     private let featureBuilder: any FeatureBuilding
     private let aiEngine: any AIEngine
     private let personalizationEngine: any PersonalizationEngineProtocol
+    private let flagRegistry: FeatureFlagRegistry?
+    private let experimentEngine: ExperimentEngine?
 
     // MARK: - Published State
 
@@ -31,18 +33,39 @@ public final class HomeViewModel {
     /// The feature vector computed from the last pipeline run, or nil before first run.
     public var currentFeatures: UserFeatures?
 
+    // MARK: - Real-Time Adaptation
+
+    private var debounceTask: Task<Void, Never>?
+    private let debounceInterval: Duration
+
+    /// Emits a new `UIConfiguration` after every successful pipeline run.
+    /// Useful for SDK consumers who want to reactively observe configuration changes
+    /// without polling `viewState`.
+    public let configurationStream: AsyncStream<UIConfiguration>
+    private let configurationContinuation: AsyncStream<UIConfiguration>.Continuation
+
     // MARK: - Init
 
     init(
         analyticsManager: AnalyticsManager,
         featureBuilder: some FeatureBuilding,
         aiEngine: some AIEngine,
-        personalizationEngine: some PersonalizationEngineProtocol
+        personalizationEngine: some PersonalizationEngineProtocol,
+        flagRegistry: FeatureFlagRegistry? = nil,
+        experimentEngine: ExperimentEngine? = nil,
+        adaptationDebounceInterval: Duration = .seconds(2)
     ) {
         self.analyticsManager = analyticsManager
         self.featureBuilder = featureBuilder
         self.aiEngine = aiEngine
         self.personalizationEngine = personalizationEngine
+        self.flagRegistry = flagRegistry
+        self.experimentEngine = experimentEngine
+        self.debounceInterval = adaptationDebounceInterval
+
+        let (stream, continuation) = AsyncStream<UIConfiguration>.makeStream()
+        self.configurationStream = stream
+        self.configurationContinuation = continuation
     }
 
     // MARK: - Pipeline
@@ -61,6 +84,9 @@ public final class HomeViewModel {
             let prediction = try await aiEngine.predict(from: features)
             let config = personalizationEngine.configure(for: prediction)
             viewState = .ready(config, prediction)
+            configurationContinuation.yield(config)
+            await flagRegistry?.updatePrediction(prediction)
+            await experimentEngine?.updatePrediction(prediction)
         } catch {
             logger.error("Prediction pipeline failed: \(error)")
             let message: String
@@ -73,9 +99,25 @@ public final class HomeViewModel {
         }
     }
 
+    // MARK: - Debounced Adaptation
+
+    /// Schedules a debounced `loadInsights()` call. Cancels any pending schedule
+    /// so rapid event bursts result in a single pipeline run after the quiet period.
+    private func scheduleAdaptation() {
+        debounceTask?.cancel()
+        debounceTask = Task { [weak self] in
+            do {
+                try await Task.sleep(for: self?.debounceInterval ?? .seconds(2))
+                await self?.loadInsights()
+            } catch {
+                // Task was cancelled — a newer event arrived, that's expected.
+            }
+        }
+    }
+
     // MARK: - Event Tracking
 
-    /// Tracks a single event then refreshes the prediction pipeline.
+    /// Tracks a single event then schedules a debounced pipeline refresh.
     public func trackEvent(
         name: String,
         category: AnalyticsEvent.EventCategory,
@@ -83,13 +125,13 @@ public final class HomeViewModel {
     ) async {
         let event = AnalyticsEvent(name: name, category: category, properties: properties)
         await analyticsManager.track(event)
-        await loadInsights()
+        scheduleAdaptation()
     }
 
-    /// Tracks a batch of events then refreshes the prediction pipeline.
+    /// Tracks a batch of events then schedules a debounced pipeline refresh.
     public func trackEvents(_ events: [AnalyticsEvent]) async {
         await analyticsManager.trackBatch(events)
-        await loadInsights()
+        scheduleAdaptation()
     }
 
     /// Inserts a predefined batch of sample events to demonstrate the pipeline.
@@ -102,13 +144,14 @@ public final class HomeViewModel {
             AnalyticsEvent(name: "results_viewed", category: .navigation, properties: ["screen": "results"]),
         ]
         await analyticsManager.trackBatch(sampleEvents)
-        await loadInsights()
+        scheduleAdaptation()
     }
 
     // MARK: - Reset
 
     /// Deletes all persisted events and resets the view to idle.
     public func clearAllEvents() async {
+        debounceTask?.cancel()
         await analyticsManager.clearAll()
         eventCount = 0
         recentEvents = []

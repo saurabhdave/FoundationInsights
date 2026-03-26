@@ -54,9 +54,14 @@ public enum AIAnalyticsContainer {
         SwiftDataEventStore(modelContainer: modelContainer)
     }
 
-    static func makeAnalyticsManager() -> AnalyticsManager {
+    private static func makeAnalyticsManager() -> AnalyticsManager {
         AnalyticsManager(store: makeEventStore())
     }
+
+    /// Shared `AnalyticsManager` instance used by both `AIAnalytics` and `HomeViewModel`.
+    /// All events logged via `AIAnalytics.logEvent()` and tracked via `HomeViewModel.trackEvent()`
+    /// go to the same store, so the AI pipeline sees every event.
+    static let sharedAnalyticsManager: AnalyticsManager = makeAnalyticsManager()
 
     static func makeFeatureBuilder() -> FeatureBuilder {
         FeatureBuilder()
@@ -70,12 +75,31 @@ public enum AIAnalyticsContainer {
         PersonalizationEngine()
     }
 
-    public static func makeHomeViewModel() -> HomeViewModel {
+    /// Creates a `FeatureFlagRegistry` for AI-driven feature flags.
+    /// Register flags on the returned instance, then pass it to `makeHomeViewModel()`
+    /// so the registry is updated automatically after each prediction pipeline run.
+    public static func makeFeatureFlagRegistry() -> FeatureFlagRegistry {
+        FeatureFlagRegistry()
+    }
+
+    /// Creates an `ExperimentEngine` for AI-driven A/B testing.
+    /// Register experiments on the returned instance, then pass it to `makeHomeViewModel()`
+    /// so variant assignments update automatically after each prediction pipeline run.
+    public static func makeExperimentEngine() -> ExperimentEngine {
+        ExperimentEngine(analyticsManager: sharedAnalyticsManager)
+    }
+
+    public static func makeHomeViewModel(
+        flagRegistry: FeatureFlagRegistry? = nil,
+        experimentEngine: ExperimentEngine? = nil
+    ) -> HomeViewModel {
         HomeViewModel(
-            analyticsManager: makeAnalyticsManager(),
+            analyticsManager: sharedAnalyticsManager,
             featureBuilder: makeFeatureBuilder(),
             aiEngine: makeAIEngine(),
-            personalizationEngine: makePersonalizationEngine()
+            personalizationEngine: makePersonalizationEngine(),
+            flagRegistry: flagRegistry,
+            experimentEngine: experimentEngine
         )
     }
 }

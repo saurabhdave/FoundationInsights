@@ -8,6 +8,9 @@ struct ContentView: View {
     @Binding var hasCompletedOnboarding: Bool
     @State private var showSettings = false
 
+    let flagRegistry: FeatureFlagRegistry
+    let experimentEngine: ExperimentEngine
+
     var body: some View {
         TabView {
             Tab("Insights", systemImage: "brain.fill") {
@@ -54,6 +57,17 @@ struct ContentView: View {
                 }
             }
 
+            Tab("Personalization", systemImage: "slider.horizontal.3") {
+                NavigationStack {
+                    PersonalizationTab(flagRegistry: flagRegistry, experimentEngine: experimentEngine)
+                        .navigationTitle("Personalization")
+                        #if !os(macOS)
+                        .navigationBarTitleDisplayMode(.large)
+                        #endif
+                        .toolbar { settingsToolbarItem }
+                }
+            }
+
             Tab("User Types", systemImage: "person.3.fill") {
                 NavigationStack {
                     UserTypesTab()
@@ -92,7 +106,13 @@ struct ContentView: View {
 // MARK: - Preview
 
 #Preview {
-    ContentView(hasCompletedOnboarding: .constant(true))
-        .environment(AIAnalyticsContainer.makeHomeViewModel())
-        .modelContainer(AIAnalyticsContainer.modelContainer)
+    let registry = AIAnalyticsContainer.makeFeatureFlagRegistry()
+    let engine = AIAnalyticsContainer.makeExperimentEngine()
+    ContentView(
+        hasCompletedOnboarding: .constant(true),
+        flagRegistry: registry,
+        experimentEngine: engine
+    )
+    .environment(AIAnalyticsContainer.makeHomeViewModel(flagRegistry: registry, experimentEngine: engine))
+    .modelContainer(AIAnalyticsContainer.modelContainer)
 }

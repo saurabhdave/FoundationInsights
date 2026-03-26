@@ -28,6 +28,26 @@ extension View {
     public func aiAnalytics() -> some View {
         modifier(AIAnalyticsViewModifier())
     }
+
+    /// Configures AIAnalyticsKit with AI-driven feature flags and A/B testing.
+    ///
+    /// Pass a `FeatureFlagRegistry` and/or `ExperimentEngine` created via
+    /// `AIAnalyticsContainer` to wire them into the prediction pipeline.
+    /// Both are updated automatically after every prediction run.
+    ///
+    /// ```swift
+    /// let flags = AIAnalyticsContainer.makeFeatureFlagRegistry()
+    /// let experiments = AIAnalyticsContainer.makeExperimentEngine()
+    ///
+    /// ContentView()
+    ///     .aiAnalytics(flagRegistry: flags, experimentEngine: experiments)
+    /// ```
+    public func aiAnalytics(
+        flagRegistry: FeatureFlagRegistry? = nil,
+        experimentEngine: ExperimentEngine? = nil
+    ) -> some View {
+        modifier(AIAnalyticsViewModifier(flagRegistry: flagRegistry, experimentEngine: experimentEngine))
+    }
 }
 
 // MARK: - View Modifier
@@ -39,12 +59,15 @@ private struct AIAnalyticsViewModifier: ViewModifier {
 
     @State private var homeViewModel: HomeViewModel
 
-    init() {
+    init(flagRegistry: FeatureFlagRegistry? = nil, experimentEngine: ExperimentEngine? = nil) {
         // Configure the static facade's shared AnalyticsManager (idempotent).
         AIAnalytics._configure()
         // Initialise @State using the explicit State(wrappedValue:) form,
         // which is the correct pattern when init arguments are needed.
-        _homeViewModel = State(wrappedValue: AIAnalyticsContainer.makeHomeViewModel())
+        _homeViewModel = State(wrappedValue: AIAnalyticsContainer.makeHomeViewModel(
+            flagRegistry: flagRegistry,
+            experimentEngine: experimentEngine
+        ))
     }
 
     func body(content: Content) -> some View {

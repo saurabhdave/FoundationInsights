@@ -35,6 +35,14 @@ public enum AIAnalytics {
     /// before any `logEvent()` can arrive from the UI.
     nonisolated(unsafe) static var _manager: AnalyticsManager?
 
+    /// Optional shared feature flag registry. Set this before calling `.aiAnalytics()`
+    /// to enable `AIAnalytics.isFeatureEnabled(_:)`.
+    nonisolated(unsafe) public static var flagRegistry: FeatureFlagRegistry?
+
+    /// Optional shared experiment engine. Set this before calling `.aiAnalytics()`
+    /// to enable `AIAnalytics.experimentVariant(for:)`.
+    nonisolated(unsafe) public static var experimentEngine: ExperimentEngine?
+
     private static let logger = Logger(subsystem: "com.aianalyticskit", category: "AIAnalytics")
 
     // MARK: - Validation limits
@@ -47,7 +55,7 @@ public enum AIAnalytics {
     @MainActor
     static func _configure() {
         guard _manager == nil else { return }
-        _manager = AIAnalyticsContainer.makeAnalyticsManager()
+        _manager = AIAnalyticsContainer.sharedAnalyticsManager
     }
 
     // MARK: - Public API
@@ -127,6 +135,28 @@ public enum AIAnalytics {
     @MainActor
     public static func makeHomeViewModel() -> HomeViewModel {
         AIAnalyticsContainer.makeHomeViewModel()
+    }
+
+    // MARK: - AI-Driven Feature Flags
+
+    /// Returns `true` if the flag identified by `key` is enabled for the current prediction.
+    ///
+    /// Requires a `FeatureFlagRegistry` to be assigned to `AIAnalytics.flagRegistry`
+    /// (or passed to `makeHomeViewModel(flagRegistry:)`) before the first pipeline run.
+    /// Returns `false` if the registry is not configured or no prediction exists yet.
+    public static func isFeatureEnabled(_ key: String) async -> Bool {
+        await flagRegistry?.isEnabled(key) ?? false
+    }
+
+    // MARK: - AI-Driven A/B Testing
+
+    /// Returns the experiment assignment for the current user, or `nil` if the experiment
+    /// key is not registered or no prediction has been made yet.
+    ///
+    /// Requires an `ExperimentEngine` to be assigned to `AIAnalytics.experimentEngine`
+    /// (or passed to `makeHomeViewModel(experimentEngine:)`) before the first pipeline run.
+    public static func experimentVariant(for key: String) async -> ExperimentAssignment? {
+        await experimentEngine?.assignment(for: key)
     }
 
     // MARK: - Category Inference

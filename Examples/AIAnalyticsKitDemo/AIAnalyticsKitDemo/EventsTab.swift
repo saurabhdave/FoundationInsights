@@ -54,37 +54,33 @@ struct EventsTab: View {
     private var quickTrackCard: some View {
         CardContainer {
             VStack(alignment: .leading, spacing: 14) {
-                SectionHeader(icon: "plus.circle.fill", title: "Track Single Event")
+                SectionHeader(icon: "plus.circle.fill", title: "Quick Log")
+
+                // Static API — call from anywhere, no ViewModel or await needed.
+                Text("AIAnalytics.logEvent() — fire-and-forget, works from any file or actor.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+
                 LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 10) {
                     QuickTrackButton(label: "Navigation", icon: "arrow.right.circle.fill", color: .blue) {
                         let screens = ["home", "dashboard", "analytics", "reports", "settings", "profile", "export"]
                         let screen = screens[navCount % screens.count]
-                        Task { await viewModel.trackEvent(
-                            name: "screen_viewed",
-                            category: .navigation,
-                            properties: ["screen": screen]
-                        )}
+                        // Static call — no Task, no await, no ViewModel reference needed.
+                        AIAnalytics.logEvent("screen_viewed", parameters: ["screen": screen])
+                        Task { await viewModel.loadInsights() }
                     }
                     QuickTrackButton(label: "Interaction", icon: "hand.tap.fill", color: .green) {
-                        Task { await viewModel.trackEvent(
-                            name: "button_tapped",
-                            category: .interaction,
-                            properties: ["element": "primary_cta"]
-                        )}
+                        AIAnalytics.logEvent("button_tapped", parameters: ["element": "primary_cta"])
+                        Task { await viewModel.loadInsights() }
                     }
                     QuickTrackButton(label: "Analysis", icon: "waveform", color: .purple) {
-                        Task { await viewModel.trackEvent(
-                            name: "analysis_started",
-                            category: .analysis,
-                            properties: ["type": "on_demand"]
-                        )}
+                        AIAnalytics.logEvent("analysis_started", parameters: ["type": "on_demand"])
+                        Task { await viewModel.loadInsights() }
                     }
                     QuickTrackButton(label: "Error", icon: "exclamationmark.triangle.fill", color: .red) {
-                        Task { await viewModel.trackEvent(
-                            name: "network_timeout",
-                            category: .error,
-                            properties: ["code": "408"]
-                        )}
+                        AIAnalytics.logEvent("network_error", parameters: ["code": "408"])
+                        Task { await viewModel.loadInsights() }
                     }
                 }
                 .disabled(viewModel.viewState.isLoading)

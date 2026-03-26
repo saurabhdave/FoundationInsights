@@ -21,7 +21,7 @@ public struct AnalyticsEvent: Sendable, Identifiable {
     public init(
         id: UUID = UUID(),
         name: String,
-        category: EventCategory,
+        category: EventCategory = .interaction,
         properties: [String: String] = [:],
         timestamp: Date = .now
     ) {

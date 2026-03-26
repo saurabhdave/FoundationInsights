@@ -216,8 +216,7 @@ private struct CategoryStatView: View {
         .padding(.horizontal, 10)
         .padding(.vertical, 8)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(color.opacity(0.08))
-        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .glassEffect(.regular.tint(color), in: .rect(cornerRadius: 10))
     }
 }
 
@@ -235,13 +234,10 @@ private struct QuickTrackButton: View {
                 Text(label)
                     .font(.subheadline.weight(.medium))
             }
-            .foregroundStyle(color)
             .frame(maxWidth: .infinity)
             .padding(.vertical, 10)
-            .background(color.opacity(0.1))
-            .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.glass(.regular.tint(color)))
     }
 }
 

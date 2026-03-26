@@ -13,8 +13,6 @@ public struct CardContainer<Content: View>: View {
         content
             .padding(16)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .background(.regularMaterial)
-            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-            .shadow(color: .black.opacity(0.06), radius: 8, x: 0, y: 2)
+            .glassEffect(.regular, in: .rect(cornerRadius: 16))
     }
 }

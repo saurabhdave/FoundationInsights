@@ -219,9 +219,8 @@ private struct FeatureMetricRow: View {
                     .font(.caption2.weight(.semibold))
                     .padding(.horizontal, 7)
                     .padding(.vertical, 3)
-                    .background(statusColor.opacity(0.15))
                     .foregroundStyle(statusColor)
-                    .clipShape(Capsule())
+                    .glassEffect(.regular.tint(statusColor))
             }
             GeometryReader { geo in
                 ZStack(alignment: .leading) {

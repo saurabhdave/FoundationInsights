@@ -9,6 +9,7 @@ import SwiftUI
 public struct HomeView: View {
 
     @Environment(HomeViewModel.self) private var viewModel
+    @State private var selectedAction: UIConfiguration.RecommendedAction?
 
     public init() {}
 
@@ -48,6 +49,17 @@ public struct HomeView: View {
         .task {
             await viewModel.loadInsights()
         }
+        .alert(
+            selectedAction?.title ?? "",
+            isPresented: Binding(
+                get: { selectedAction != nil },
+                set: { if !$0 { selectedAction = nil } }
+            )
+        ) {
+            Button("OK") { selectedAction = nil }
+        } message: {
+            Text(selectedAction?.subtitle ?? "")
+        }
     }
 
     // MARK: - Status Card
@@ -82,7 +94,7 @@ public struct HomeView: View {
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 12)
             }
-            .buttonStyle(.borderedProminent)
+            .buttonStyle(.glassProminent)
             .disabled(viewModel.viewState.isLoading)
 
             Button {
@@ -92,7 +104,7 @@ public struct HomeView: View {
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 12)
             }
-            .buttonStyle(.bordered)
+            .buttonStyle(.glass)
             .disabled(viewModel.viewState.isLoading)
         }
     }
@@ -109,9 +121,8 @@ public struct HomeView: View {
                         .font(.caption.weight(.semibold))
                         .padding(.horizontal, 10)
                         .padding(.vertical, 5)
-                        .background(config.accentColor.opacity(0.15))
                         .foregroundStyle(config.accentColor)
-                        .clipShape(Capsule())
+                        .glassEffect(.regular.tint(config.accentColor), in: .capsule)
                 }
 
                 HStack(spacing: 12) {
@@ -137,8 +148,7 @@ public struct HomeView: View {
                 }
                 .padding(.horizontal, 10)
                 .padding(.vertical, 6)
-                .background(Color.secondary.opacity(0.1))
-                .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                .glassEffect(.regular, in: .rect(cornerRadius: 8))
 
                 HStack(spacing: 5) {
                     Image(systemName: "lock.shield.fill")
@@ -150,11 +160,6 @@ public struct HomeView: View {
                 .padding(.top, 2)
             }
         }
-        .overlay(
-            RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .fill(config.accentColor.opacity(0.05))
-                .allowsHitTesting(false)
-        )
     }
 
     // MARK: - Recommendations
@@ -165,27 +170,32 @@ public struct HomeView: View {
                 SectionHeader(icon: "lightbulb.fill", title: "Recommended for You")
 
                 ForEach(config.recommendedActions) { action in
-                    HStack(spacing: 12) {
-                        Image(systemName: action.icon)
-                            .font(.title3)
-                            .foregroundStyle(config.accentColor)
-                            .frame(width: 32)
+                    Button {
+                        selectedAction = action
+                    } label: {
+                        HStack(spacing: 12) {
+                            Image(systemName: action.icon)
+                                .font(.title3)
+                                .foregroundStyle(config.accentColor)
+                                .frame(width: 32)
 
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text(action.title)
-                                .font(.subheadline.weight(.medium))
-                            Text(action.subtitle)
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(action.title)
+                                    .font(.subheadline.weight(.medium))
+                                Text(action.subtitle)
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+
+                            Spacer()
+
+                            Image(systemName: "chevron.right")
                                 .font(.caption)
-                                .foregroundStyle(.secondary)
+                                .foregroundStyle(.tertiary)
                         }
-
-                        Spacer()
-
-                        Image(systemName: "chevron.right")
-                            .font(.caption)
-                            .foregroundStyle(.tertiary)
+                        .padding(.vertical, 4)
                     }
-                    .padding(.vertical, 4)
+                    .buttonStyle(.plain)
                 }
 
                 if config.showAdvancedFeatures {

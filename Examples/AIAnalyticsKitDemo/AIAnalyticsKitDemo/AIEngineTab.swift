@@ -34,14 +34,11 @@ struct AIEngineTab: View {
                 SectionHeader(icon: "cpu.fill", title: "On-Device AI Engine")
 
                 HStack(spacing: 14) {
-                    ZStack {
-                        Circle()
-                            .fill(Color.purple.opacity(0.12))
-                            .frame(width: 52, height: 52)
-                        Image(systemName: "brain.fill")
-                            .font(.title2)
-                            .foregroundStyle(.purple)
-                    }
+                    Image(systemName: "brain.fill")
+                        .font(.title2)
+                        .foregroundStyle(.purple)
+                        .frame(width: 52, height: 52)
+                        .glassEffect(.regular.tint(.purple), in: .circle)
                     VStack(alignment: .leading, spacing: 4) {
                         Text("Foundation Models")
                             .font(.headline)
@@ -292,9 +289,8 @@ private struct StatusPill: View {
         }
         .padding(.horizontal, 10)
         .padding(.vertical, 5)
-        .background(color.opacity(0.12))
         .foregroundStyle(color)
-        .clipShape(Capsule())
+        .glassEffect(.regular.tint(color))
     }
 }
 

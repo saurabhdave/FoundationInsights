@@ -50,8 +50,7 @@ struct OnboardingView: View {
                     Button("Skip") {
                         completeOnboarding()
                     }
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
+                    .buttonStyle(.glass)
                     .padding(.horizontal, 24)
                     .padding(.top, 16)
                 }
@@ -99,10 +98,9 @@ struct OnboardingView: View {
                         }
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 16)
-                        .background(pages[currentPage].imageColor)
-                        .foregroundStyle(.white)
-                        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
                     }
+                    .buttonStyle(.glassProminent)
+                    .tint(pages[currentPage].imageColor)
                     .padding(.horizontal, 32)
                     .animation(.easeInOut(duration: 0.2), value: currentPage)
                 }
@@ -125,14 +123,11 @@ private struct OnboardingPageView: View {
 
     var body: some View {
         VStack(spacing: 32) {
-            ZStack {
-                Circle()
-                    .fill(page.imageColor.opacity(0.12))
-                    .frame(width: 120, height: 120)
-                Image(systemName: page.systemImage)
-                    .font(.system(size: 52, weight: .semibold))
-                    .foregroundStyle(page.imageColor)
-            }
+            Image(systemName: page.systemImage)
+                .font(.system(size: 52, weight: .semibold))
+                .foregroundStyle(page.imageColor)
+                .frame(width: 120, height: 120)
+                .glassEffect(.regular.tint(page.imageColor), in: .circle)
 
             VStack(spacing: 14) {
                 Text(page.title)
@@ -183,8 +178,7 @@ private struct PipelineDiagramView: View {
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 10)
-        .background(.regularMaterial)
-        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .glassEffect(.regular, in: .rect(cornerRadius: 12))
     }
 }
 

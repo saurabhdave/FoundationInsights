@@ -77,14 +77,11 @@ private struct UserTypeCard: View {
                 // Header row — always visible
                 Button(action: onTap) {
                     HStack(spacing: 14) {
-                        ZStack {
-                            Circle()
-                                .fill(personalization.accentColor.opacity(0.12))
-                                .frame(width: 46, height: 46)
-                            Image(systemName: userType.icon)
-                                .font(.title3)
-                                .foregroundStyle(personalization.accentColor)
-                        }
+                        Image(systemName: userType.icon)
+                            .font(.title3)
+                            .foregroundStyle(personalization.accentColor)
+                            .frame(width: 46, height: 46)
+                            .glassEffect(.regular.tint(personalization.accentColor), in: .circle)
 
                         VStack(alignment: .leading, spacing: 3) {
                             HStack(spacing: 6) {
@@ -128,12 +125,8 @@ private struct UserTypeCard: View {
                                 Circle()
                                     .fill(personalization.accentColor)
                                     .frame(width: 14, height: 14)
-                                Text("Accent color · ")
+                                Text("Accent color · \(Text(personalization.greeting).italic())")
                                     .font(.caption)
-                                    .foregroundStyle(.secondary)
-                                +
-                                Text(personalization.greeting)
-                                    .font(.caption.italic())
                                     .foregroundStyle(.secondary)
                             }
 
@@ -186,7 +179,7 @@ private struct UserTypeCard: View {
         }
         .overlay(
             RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .stroke(isActive ? personalization.accentColor.opacity(0.5) : .clear, lineWidth: 1.5)
+                .strokeBorder(isActive ? personalization.accentColor.opacity(0.5) : .clear, lineWidth: 1.5)
         )
     }
 

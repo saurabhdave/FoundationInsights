@@ -15,56 +15,106 @@ swift build -c release
 swift test
 
 # Build the sample app (requires Xcode + iOS 26 Simulator)
-xcodebuild -project Examples/FoundationInsightsDemo/FoundationInsightsDemo.xcodeproj \
-  -scheme FoundationInsightsDemo \
+xcodebuild -project Examples/AIAnalyticsKitDemo/AIAnalyticsKitDemo.xcodeproj \
+  -scheme AIAnalyticsKitDemo \
   -destination 'platform=iOS Simulator,name=iPhone 17 Pro' \
   build
 ```
 
 ## Architecture
 
-**FoundationInsights** is an on-device log intelligence library using Apple's Foundation Models framework (iOS 26+, arm64). It analyzes log batches entirely on-device via the Neural Engine — no network calls, no data egress.
+**AIAnalyticsKit** is an on-device user behavior analytics and AI personalization library using Apple's Foundation Models framework (iOS 26+). It classifies users entirely on-device via the Neural Engine — no network calls, no data egress.
 
-### Two Targets
+### One Target
 
-- **FoundationInsights** (library) — the main product consumed by apps
-- **AdapterDownloadExtension** (executable) — a Background Assets App Extension that downloads the custom adapter out-of-process
+- **AIAnalyticsKit** (library) — the main product consumed by apps
 
-### Dual-Path Analysis
+### Key Data Flow
 
-`LogIntelligenceService` (actor) operates in two modes:
+```
+User Action
+  ↓
+AnalyticsManager.track(_:) / trackBatch(_:)
+  ↓
+SwiftDataEventStore (persistence)
+  ↓
+FeatureBuilder.buildFeatures(from:)
+  ↓
+FoundationPredictionEngine.predict(from:)
+  ↓
+PersonalizationEngine.configure(for:)
+  ↓
+HomeView (renders UIConfiguration + UserPrediction)
+```
 
-1. **Fast path** — uses `SystemLanguageModel` with `.contentTagging` (always available, zero cold-start)
-2. **Enriched path** — uses a custom `UserFrictionAdapter` (~160 MB) downloaded via Background Assets and compiled once per device/OS pair, then cached to disk
+### Module Structure
 
-The service automatically upgrades to the enriched path once `prepare(adapterURL:)` is called and compilation completes.
+```
+Sources/AIAnalyticsKit/
+├── AI/                        ← Prediction protocols + engines
+│   ├── AIEngine.swift
+│   ├── FoundationPredictionEngine.swift
+│   ├── CoreMLPredictionEngine.swift
+│   ├── UserPrediction.swift
+│   └── UserType.swift
+├── Analytics/                 ← Event tracking
+│   ├── AnalyticsTracking.swift
+│   ├── AnalyticsEvent.swift
+│   └── AnalyticsManager.swift
+├── Storage/                   ← SwiftData persistence
+│   ├── EventStore.swift
+│   ├── AnalyticsEventModel.swift
+│   └── SwiftDataEventStore.swift
+├── Features/                  ← Feature vector extraction
+│   ├── UserFeatures.swift
+│   └── FeatureBuilder.swift
+├── Personalization/           ← UI configuration from prediction
+│   ├── UIConfiguration.swift
+│   └── PersonalizationEngine.swift
+├── Presentation/              ← SwiftUI views + ViewModel
+│   ├── HomeView.swift
+│   ├── HomeViewModel.swift
+│   ├── HomeViewState.swift
+│   ├── CardContainer.swift
+│   ├── SectionHeader.swift
+│   └── ErrorBanner.swift
+└── Container/
+    └── AIAnalyticsContainer.swift   ← Composition root / DI factory
+```
 
 ### Key Patterns
 
-**Actor isolation** (`LogIntelligenceService` is a Swift `actor`): concurrent `analyze()` calls serialize automatically; Swift 6 strict concurrency is enforced across both targets.
+**Actor isolation**: `AnalyticsManager` and `SwiftDataEventStore` are actors for thread-safe concurrency. Swift 6 strict concurrency is enforced.
 
-**Single-slot session pool**: The adapter session (~160 MB of GPU memory) is created lazily, used, then evicted via `defer { liveAdapterSession = nil }` after each call to prevent jetsam pressure.
+**Protocol-based DI**: `AIEngine`, `EventStore`, `FeatureBuilding`, `PersonalizationEngineProtocol` — swap implementations for testing.
 
-**Adapter state machine**: `AdapterState` enum transitions `notLoaded → compiling → ready(adapter)` (or `failed`). `prepare()` is idempotent.
+**SwiftData persistence**: `@ModelActor SwiftDataEventStore` uses background-safe database access. `AnalyticsEventModel` maps to/from the domain `AnalyticsEvent`.
 
-**Constrained generation**: `LogSummary` uses `@Generable` + `@Guide` annotations so the model is constrained at the logit level — worst-case ~50 output tokens → <200ms on A17 Pro.
+**Explicit view state**: `HomeViewState` enum (`idle / loading / ready / failure`) drives all UI transitions.
 
-**Coordinator pattern**: `LogAnalyticsCoordinator` sits between the view layer and `LogIntelligenceService`, routing high-urgency summaries to crash reporters and posting `NotificationCenter` events.
+**Foundation Models prediction**: `FoundationPredictionEngine` uses `SystemLanguageModel(useCase: .general)` with a heuristic fallback when the model is unavailable (simulator). Heuristic thresholds: `errorRate > 0.3` → At-Risk, `totalEvents > 50 && analysisCount > 10` → Power, `uniqueScreens > 5` → Explorer, else Casual.
+
+**`AIAnalyticsContainer` is `@MainActor`** — call `makeHomeViewModel()` and access `modelContainer` from the main actor only.
+
+> **Known issue**: `FoundationPredictionEngine` logger subsystem is still `"com.app.FoundationInsightsDemo"` — a leftover from the old package name. Update to match the new bundle ID when integrating.
+
+### Public API
+
+- `AIAnalyticsContainer.makeHomeViewModel()` → `HomeViewModel` (factory entry point)
+- `AIAnalyticsContainer.modelContainer` → `ModelContainer` (inject into SwiftUI `.modelContainer()`)
+- `HomeView` → ready-to-use SwiftUI view (requires `HomeViewModel` in environment)
+- `HomeViewModel` → `@Observable @MainActor` class for `@Environment` injection
+- `UserType` / `UserPrediction` → domain types (public)
 
 ### Swift Version & Platform
 
 - Swift 6.0 (strict concurrency, `.swiftLanguageMode(.v6)`)
-- iOS 26.0 minimum, arm64 only
-- No external dependencies — only Apple frameworks: `FoundationModels`, `BackgroundAssets`, `UIKit`, `OSLog`
+- iOS 26.0 minimum, macOS 26.0 minimum
+- No external dependencies — only Apple frameworks: `FoundationModels`, `SwiftData`, `SwiftUI`, `OSLog`
 
 ### Sample App
 
-`Examples/FoundationInsightsDemo/` is a standalone Xcode project that imports FoundationInsights as a local SPM dependency (`relativePath = "../.."`). Open `FoundationInsightsDemo.xcodeproj` directly — no workspace needed.
+`Examples/AIAnalyticsKitDemo/` is a standalone Xcode project that imports AIAnalyticsKit as a local SPM dependency (`relativePath = "../.."`). Open `AIAnalyticsKitDemo.xcodeproj` directly — no workspace needed.
 
-- **Fast path** works in the simulator (built-in `.contentTagging` model)
-- **Enriched path** requires a physical device with a Neural Engine and the downloaded adapter
-- Pre-canned log batches (High / Medium / Low urgency) are in `SampleLogBatches.swift`
-
-### Background Assets Setup
-
-The `AdapterDownloadExtension` executable requires an App Group (`group.com.app.FoundationInsights`) shared between the main app and the extension. The adapter remote URL and download identifier are configured in `AdapterAssetDownloader.swift`.
+- Works in the iOS Simulator (Foundation Models `.general` use case)
+- `AIAnalyticsContainer` wires the full object graph at launch

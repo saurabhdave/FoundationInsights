@@ -86,6 +86,16 @@ No external dependencies — only Apple frameworks: `FoundationModels`, `SwiftDa
 
 ---
 
+![IMG_7933](https://github.com/user-attachments/assets/c7923a87-0f26-45a6-bea8-eeb4d4c6f3e4)
+![IMG_7934](https://github.com/user-attachments/assets/6fe7e00c-dc69-4421-ae2a-cd8df780d4eb)
+![IMG_7935](https://github.com/user-attachments/assets/7034bebb-a258-470a-8299-f37a0701e96d)
+![IMG_7936](https://github.com/user-attachments/assets/84bd1c6b-4679-434e-bf85-df77c44e43c1)
+![IMG_7937](https://github.com/user-attachments/assets/021a57d2-0a37-4dff-8088-cfd8a1814155)
+
+
+
+---
+
 ## Installation
 
 ### Swift Package Manager

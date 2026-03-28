@@ -21,7 +21,12 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Select Xcode
-        run: sudo xcode-select -s /Applications/Xcode_26.0.app/Contents/Developer
+        run: |
+          if [ -d /Applications/Xcode_26.0.1.app ]; then
+            sudo xcode-select -s /Applications/Xcode_26.0.1.app/Contents/Developer
+          else
+            sudo xcode-select -s /Applications/Xcode_26.0.app/Contents/Developer
+          fi
 
       - name: Swift version
         run: swift --version
@@ -32,11 +37,19 @@ jobs:
       - name: Build (release)
         run: swift build -c release
 
+      - name: Boot iOS Simulator
+        run: |
+          RUNTIME=$(xcrun simctl list runtimes available -j | \
+            python3 -c "import json,sys; rts=[r['identifier'] for r in json.load(sys.stdin)['runtimes'] if 'iOS' in r.get('name','') and r.get('isAvailable',False)]; print(rts[-1] if rts else '')")
+          echo "Using runtime: $RUNTIME"
+          xcrun simctl create "CI-iPhone" "iPhone 16" "$RUNTIME"
+          xcrun simctl boot "CI-iPhone"
+
       - name: Run tests
         run: |
           xcodebuild test \
             -scheme AIAnalyticsKit \
-            -destination 'platform=iOS Simulator,name=iPhone 17 Pro'
+            -destination 'platform=iOS Simulator,name=CI-iPhone'
 
   lint:
     name: Swift Strict Concurrency
@@ -48,7 +61,12 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Select Xcode
-        run: sudo xcode-select -s /Applications/Xcode_26.0.app/Contents/Developer
+        run: |
+          if [ -d /Applications/Xcode_26.0.1.app ]; then
+            sudo xcode-select -s /Applications/Xcode_26.0.1.app/Contents/Developer
+          else
+            sudo xcode-select -s /Applications/Xcode_26.0.app/Contents/Developer
+          fi
 
       - name: Build with strict concurrency
         run: swift build -Xswiftc -strict-concurrency=complete
